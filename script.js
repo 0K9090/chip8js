@@ -19,6 +19,7 @@ var fxoapress;
 var fxoaindex;
 var keysPressed = Array(16).fill(0);
 var fontset = [
+  // The Prettier formatter gave each element its own line, that's why it's like this.
   0xf0,
   0x90,
   0x90,
