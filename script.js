@@ -131,7 +131,19 @@ function drawScreen() {
   }
 }
 
-function emulationCycle() {
+function waitingKeypress() {
+  return new Promise((resolve) => {
+    document.addEventListener("keydown", onKeyHandler);
+    function onKeyHandler(e) {
+      if (e.code === "Space") {
+        document.removeEventListener("keydown", onKeyHandler);
+        resolve();
+      }
+    }
+  });
+}
+
+async function emulationCycle() {
   // This is the main emulation cycle, where all the opcodes get run.
   // I have not implemented the keypad yet.
   let Vx = 0x0;
@@ -142,8 +154,6 @@ function emulationCycle() {
     ppc = pc;
     opcode = (memory[pc] << 8) | memory[pc + 1];
     pc += 2;
-    document.getElementById("opcode").innerHTML =
-      "Opcode:" + (opcode & 0xffff).toString(16);
     switch ((opcode & 0xf000) >> 12) {
       case 0x0:
         switch (opcode & 0x000f) {
@@ -477,6 +487,12 @@ function emulationCycle() {
         }
         break;
     }
+    document.getElementById("opcode").innerHTML =
+      "Opcode:" +
+      ttr +
+      "| Opcode Actually running: " +
+      (opcode & 0xffff).toString(16);
+    // await waitingKeypress();
   }
   drawScreen();
   if (delay_timer > 0) {
